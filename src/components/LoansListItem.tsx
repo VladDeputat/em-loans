@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { addComas } from '../helpers/commonFunctions';
+import { Btn } from '../helpers/commonStyled';
+import Modal from './Modal';
 
 const MainContainer = styled.div`
+  position: relative;
   padding: 30px;
   margin: 0 auto;
   width: 600px;
@@ -9,6 +13,15 @@ const MainContainer = styled.div`
   border-radius: 3px;
   background-color: #ffffff;
   margin-bottom: 10px;
+`;
+
+const InvestedSign = styled.p`
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-weight: 500;
+  font-size: 20px;
+  color: green;
 `;
 
 const InfoContainer = styled.div`
@@ -32,36 +45,7 @@ const LoanName = styled.h3`
   line-height: 1.2;
   margin-bottom: 10px;
 `;
-
-const Button = styled.button`
-  width: 150px;
-  height: 50px;
-  border-radius: 3px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 24px;
-
-  color: gray;
-  background: #ffff99;
-  text-transform: uppercase;
-  transition: all 150ms linear;
-  &:hover,
-  &:active {
-    background: #ffff00;
-    color: #0099cc;
-  }
-`;
-
-// "title": "Voluptate et sed tempora qui quisquam.",
-//       "tranche": "A",
-//       "available": "11,959",
-//       "annualised_return": "8.60",
-//       "term_remaining": "864000",
-//       "ltv": "48.80",
-//       "amount": "85,754"
-
-interface Loan {
+export interface Loan {
   id: String;
   title: String;
   available: String;
@@ -72,19 +56,18 @@ interface Loan {
 }
 interface Props {
   loan: Loan;
-  setModalOpen: (arg: boolean) => void;
-  setCurrentLoan: (loan: object) => void;
 }
 
-const LoansListItem: React.FC<Props> = ({ loan, setModalOpen, setCurrentLoan }) => {
-  const onModalOpen = () => {
-    setCurrentLoan(loan);
-    setModalOpen(true);
-  };
+const LoansListItem: React.FC<Props> = ({ loan }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [invested, setInvested] = useState(false);
 
   return (
     <MainContainer>
+      {modalOpen && <Modal setModalOpen={setModalOpen} setInvested={setInvested} currentLoan={loan} />}
+
       <LoanName>{loan.title}</LoanName>
+      {invested && <InvestedSign>Invested</InvestedSign>}
       <InfoContainer>
         <ul>
           <li>Annualised return</li>
@@ -94,12 +77,12 @@ const LoansListItem: React.FC<Props> = ({ loan, setModalOpen, setCurrentLoan }) 
         <ul>
           <li>{loan.annualised_return}</li>
           <li>{loan.ltv}</li>
-          <li>&#163;{loan.amount}</li>
+          <li>&#163;{addComas(loan.amount)}</li>
         </ul>
 
-        <Button type="button" onClick={onModalOpen}>
+        <Btn type="button" onClick={() => setModalOpen(true)}>
           invest
-        </Button>
+        </Btn>
       </InfoContainer>
     </MainContainer>
   );

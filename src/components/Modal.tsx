@@ -3,6 +3,9 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import styled from 'styled-components';
 import data from '../helpers/current-loans.json';
+import { Btn } from '../helpers/commonStyled';
+import { addComas } from '../helpers/commonFunctions';
+import { Loan } from './LoansListItem';
 
 const BackDrop = styled.div`
   position: fixed;
@@ -68,25 +71,9 @@ const CloseBtn = styled.button`
   box-shadow: 0px 0px 1px rgba(12, 26, 75, 0.1), 0px 4px 20px -2px rgba(50, 50, 71, 0.08);
 `;
 
-const SubmitBtn = styled.button`
+const SubmitBtn = styled(Btn)`
   display: block;
-  width: 150px;
-  height: 50px;
-  border-radius: 3px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 24px;
   margin-left: auto;
-  color: gray;
-  background: #ffff99;
-  text-transform: uppercase;
-  transition: all 150ms linear;
-  &:hover,
-  &:active {
-    background: #ffff00;
-    color: #0099cc;
-  }
 `;
 
 const Title = styled.h3`
@@ -104,11 +91,14 @@ const StyledErrorMessage = styled(ErrorMessage)`
 `;
 
 interface Props {
+  currentLoan: Loan;
   setModalOpen: (modalOpen: boolean) => void;
-  currentLoan: any;
+  setInvested: (invested: boolean) => void;
+
+  // onInvest: (loan: Loan) => void;
 }
 
-const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
+const Modal: React.FC<Props> = ({ setModalOpen, setInvested, currentLoan }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -116,10 +106,12 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
     };
   }, []);
 
-  const onEdit = (investValue: Number) => {
-    const i = data.loans.findIndex((loan) => currentLoan.id === loan.id);
-    data.loans[i].available = (+data.loans[i].available - +investValue).toString();
-    data.loans[i].amount = (+data.loans[i].amount + +investValue).toString();
+  const onEdit = (investValue: number) => {
+    const loan = data.loans.find((loan) => currentLoan.id === loan.id);
+    if (loan) {
+      loan.available = (+loan.available - investValue).toString();
+      loan.amount = (+loan.amount + investValue).toString();
+    }
   };
 
   const getDaysLeft = () => {
@@ -130,7 +122,7 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
   const FormSchema = Yup.object().shape({
     number: Yup.number()
       .min(1, 'You might want to invest at least &#163;1')
-      .max(currentLoan.available, 'You cant invest more then you have')
+      .max(+currentLoan.available, 'You cant invest more then you have')
       .required('Please, enter your amount'),
   });
 
@@ -147,7 +139,7 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
         <div>
           <p>Invest in loan</p>
           <Title>{currentLoan.title}</Title>
-          <p>Amount available: &#163;{currentLoan.available}</p>
+          <p>Amount available: &#163;{addComas(currentLoan.available)}</p>
           <p>Loan ends in: {getDaysLeft()} days</p>
           <p>Investment amount (&#163;)</p>
         </div>
@@ -156,6 +148,7 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
           validationSchema={FormSchema}
           onSubmit={({ number }) => {
             onEdit(number);
+            setInvested(true);
             setModalOpen(false);
           }}
         >
