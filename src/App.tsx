@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import LoansListItem from './components/LoansListItem';
+import Modal from './components/Modal';
 import { addComas } from './helpers/commonFunctions';
 import data from './helpers/current-loans.json';
 
@@ -23,6 +24,9 @@ const Amount = styled.span`
 `;
 
 const App: React.FC = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [currentLoan, setCurrentLoan] = useState({});
+
   const total = data.loans
     .map((loan) => +loan.available)
     .reduce((acc, amount) => acc + amount)
@@ -30,9 +34,11 @@ const App: React.FC = () => {
 
   return (
     <div>
+      {modalOpen && <Modal setModalOpen={setModalOpen} currentLoan={currentLoan} />}
+
       <Heading>Current loans</Heading>
       {data.loans.map((loan) => (
-        <LoansListItem key={loan.id} loan={loan} />
+        <LoansListItem key={loan.id} loan={loan} setModalOpen={setModalOpen} setCurrentLoan={setCurrentLoan} />
       ))}
       <AvailableAmount>
         Total amount avaiable for ivestments: <Amount>&#163;{addComas(total)}</Amount>

@@ -53,21 +53,24 @@ export interface Loan {
   term_remaining: String;
   ltv: String;
   amount: String;
+  invested: Boolean;
 }
 interface Props {
   loan: Loan;
+  setModalOpen: (modalOpen: boolean) => void;
+  setCurrentLoan: (loan: Loan) => void;
 }
 
-const LoansListItem: React.FC<Props> = ({ loan }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [invested, setInvested] = useState(false);
+const LoansListItem: React.FC<Props> = ({ loan, setModalOpen, setCurrentLoan }) => {
+  const onModalOpen = () => {
+    setCurrentLoan(loan);
+    setModalOpen(true);
+  };
 
   return (
     <MainContainer>
-      {modalOpen && <Modal setModalOpen={setModalOpen} setInvested={setInvested} currentLoan={loan} />}
-
       <LoanName>{loan.title}</LoanName>
-      {invested && <InvestedSign>Invested</InvestedSign>}
+      {loan.invested && <InvestedSign>Invested</InvestedSign>}
       <InfoContainer>
         <ul>
           <li>Annualised return</li>
@@ -80,7 +83,7 @@ const LoansListItem: React.FC<Props> = ({ loan }) => {
           <li>&#163;{addComas(loan.amount)}</li>
         </ul>
 
-        <Btn type="button" onClick={() => setModalOpen(true)}>
+        <Btn type="button" onClick={onModalOpen}>
           invest
         </Btn>
       </InfoContainer>

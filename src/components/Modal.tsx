@@ -91,14 +91,13 @@ const StyledErrorMessage = styled(ErrorMessage)`
 `;
 
 interface Props {
-  currentLoan: Loan;
+  currentLoan: any;
   setModalOpen: (modalOpen: boolean) => void;
-  setInvested: (invested: boolean) => void;
 
   // onInvest: (loan: Loan) => void;
 }
 
-const Modal: React.FC<Props> = ({ setModalOpen, setInvested, currentLoan }) => {
+const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -106,11 +105,18 @@ const Modal: React.FC<Props> = ({ setModalOpen, setInvested, currentLoan }) => {
     };
   }, []);
 
-  const onEdit = (investValue: number) => {
-    const loan = data.loans.find((loan) => currentLoan.id === loan.id);
+  const loan = data.loans.find((loan) => currentLoan.id === loan.id);
+
+  const onLoanEdit = (investValue: number) => {
     if (loan) {
       loan.available = (+loan.available - investValue).toString();
       loan.amount = (+loan.amount + investValue).toString();
+    }
+  };
+
+  const setLoanInvested = () => {
+    if (loan) {
+      loan.invested = true;
     }
   };
 
@@ -147,8 +153,8 @@ const Modal: React.FC<Props> = ({ setModalOpen, setInvested, currentLoan }) => {
           initialValues={initialValues}
           validationSchema={FormSchema}
           onSubmit={({ number }) => {
-            onEdit(number);
-            setInvested(true);
+            onLoanEdit(number);
+            setLoanInvested();
             setModalOpen(false);
           }}
         >
