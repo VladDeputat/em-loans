@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { addComas } from '../helpers/commonFunctions';
 import { Btn } from '../helpers/commonStyled';
-import Modal from './Modal';
 
 const MainContainer = styled.div`
   position: relative;
@@ -46,22 +44,22 @@ const LoanName = styled.h3`
   margin-bottom: 10px;
 `;
 export interface Loan {
-  id: String;
-  title: String;
-  available: String;
-  annualised_return: String;
-  term_remaining: String;
-  ltv: String;
-  amount: String;
-  invested: Boolean;
+  id: string;
+  title: string;
+  available: string;
+  annualised_return: string;
+  term_remaining: string;
+  ltv: string;
+  amount: string;
 }
 interface Props {
   loan: Loan;
+  invested: { [key: string]: boolean };
   setModalOpen: (modalOpen: boolean) => void;
   setCurrentLoan: (loan: Loan) => void;
 }
 
-const LoansListItem: React.FC<Props> = ({ loan, setModalOpen, setCurrentLoan }) => {
+const LoansListItem: React.FC<Props> = ({ loan, invested, setModalOpen, setCurrentLoan }) => {
   const onModalOpen = () => {
     setCurrentLoan(loan);
     setModalOpen(true);
@@ -70,7 +68,7 @@ const LoansListItem: React.FC<Props> = ({ loan, setModalOpen, setCurrentLoan }) 
   return (
     <MainContainer>
       <LoanName>{loan.title}</LoanName>
-      {loan.invested && <InvestedSign>Invested</InvestedSign>}
+      {invested[loan.id] && <InvestedSign>Invested</InvestedSign>}
       <InfoContainer>
         <ul>
           <li>Annualised return</li>
@@ -80,7 +78,7 @@ const LoansListItem: React.FC<Props> = ({ loan, setModalOpen, setCurrentLoan }) 
         <ul>
           <li>{loan.annualised_return}</li>
           <li>{loan.ltv}</li>
-          <li>&#163;{addComas(loan.amount)}</li>
+          <li>&#163;{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(+loan.amount)}</li>
         </ul>
 
         <Btn type="button" onClick={onModalOpen}>

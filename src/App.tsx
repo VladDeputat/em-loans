@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import LoansListItem from './components/LoansListItem';
 import Modal from './components/Modal';
-import { addComas } from './helpers/commonFunctions';
 import data from './helpers/current-loans.json';
 
 const Heading = styled.h1`
@@ -26,6 +25,7 @@ const Amount = styled.span`
 const App: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentLoan, setCurrentLoan] = useState({});
+  const [invested, setInvested] = useState<{ [key: string]: boolean }>({});
 
   const total = data.loans
     .map((loan) => +loan.available)
@@ -34,14 +34,23 @@ const App: React.FC = () => {
 
   return (
     <div>
-      {modalOpen && <Modal setModalOpen={setModalOpen} currentLoan={currentLoan} />}
+      {modalOpen && (
+        <Modal setModalOpen={setModalOpen} invested={invested} setInvested={setInvested} currentLoan={currentLoan} />
+      )}
 
       <Heading>Current loans</Heading>
       {data.loans.map((loan) => (
-        <LoansListItem key={loan.id} loan={loan} setModalOpen={setModalOpen} setCurrentLoan={setCurrentLoan} />
+        <LoansListItem
+          key={loan.id}
+          loan={loan}
+          invested={invested}
+          setModalOpen={setModalOpen}
+          setCurrentLoan={setCurrentLoan}
+        />
       ))}
       <AvailableAmount>
-        Total amount avaiable for ivestments: <Amount>&#163;{addComas(total)}</Amount>
+        Total amount avaiable for ivestments:
+        <Amount>&#163;{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(+total)}</Amount>
       </AvailableAmount>
     </div>
   );

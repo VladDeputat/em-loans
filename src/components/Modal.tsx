@@ -4,7 +4,6 @@ import * as Yup from 'yup';
 import styled from 'styled-components';
 import data from '../helpers/current-loans.json';
 import { Btn } from '../helpers/commonStyled';
-import { addComas } from '../helpers/commonFunctions';
 import { Loan } from './LoansListItem';
 
 const BackDrop = styled.div`
@@ -92,12 +91,12 @@ const StyledErrorMessage = styled(ErrorMessage)`
 
 interface Props {
   currentLoan: any;
+  invested: { [key: string]: boolean };
+  setInvested: (invested: { [key: string]: boolean }) => void;
   setModalOpen: (modalOpen: boolean) => void;
-
-  // onInvest: (loan: Loan) => void;
 }
 
-const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
+const Modal: React.FC<Props> = ({ setModalOpen, invested, setInvested, currentLoan }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -114,12 +113,6 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
     }
   };
 
-  const setLoanInvested = () => {
-    if (loan) {
-      loan.invested = true;
-    }
-  };
-
   const getDaysLeft = () => {
     const diff = +currentLoan.term_remaining - Date.now();
     return Math.round(diff / (1000 * 60 * 60 * 24));
@@ -127,7 +120,7 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
 
   const FormSchema = Yup.object().shape({
     number: Yup.number()
-      .min(1, 'You might want to invest at least &#163;1')
+      .min(1, 'You might want to invest at least 1')
       .max(+currentLoan.available, 'You cant invest more then you have')
       .required('Please, enter your amount'),
   });
@@ -145,7 +138,10 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
         <div>
           <p>Invest in loan</p>
           <Title>{currentLoan.title}</Title>
-          <p>Amount available: &#163;{addComas(currentLoan.available)}</p>
+          <p>
+            Amount available: &#163;
+            {new Intl.NumberFormat('en-GB', { maximumSignificantDigits: 3 }).format(+currentLoan.available)}
+          </p>
           <p>Loan ends in: {getDaysLeft()} days</p>
           <p>Investment amount (&#163;)</p>
         </div>
@@ -154,7 +150,8 @@ const Modal: React.FC<Props> = ({ setModalOpen, currentLoan }) => {
           validationSchema={FormSchema}
           onSubmit={({ number }) => {
             onLoanEdit(number);
-            setLoanInvested();
+            invested[currentLoan.id] = true;
+            setInvested(invested);
             setModalOpen(false);
           }}
         >
