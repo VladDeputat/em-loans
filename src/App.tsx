@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import LoansListItem from './components/LoansListItem';
 import Modal from './components/Modal';
+import { formatNumber } from './helpers/commonFunctions';
 import data from './helpers/current-loans.json';
 
 const Heading = styled.h1`
@@ -50,7 +51,7 @@ const App: React.FC = () => {
       ))}
       <AvailableAmount>
         Total amount avaiable for ivestments:
-        <Amount>&#163;{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(+total)}</Amount>
+        <Amount>{formatNumber(total)}</Amount>
       </AvailableAmount>
     </div>
   );

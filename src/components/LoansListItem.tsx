@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { formatNumber } from '../helpers/commonFunctions';
 import { Btn } from '../helpers/commonStyled';
 
 const MainContainer = styled.div`
@@ -78,7 +79,7 @@ const LoansListItem: React.FC<Props> = ({ loan, invested, setModalOpen, setCurre
         <ul>
           <li>{loan.annualised_return}</li>
           <li>{loan.ltv}</li>
-          <li>&#163;{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(+loan.amount)}</li>
+          <li>{formatNumber(loan.amount)}</li>
         </ul>
 
         <Btn type="button" onClick={onModalOpen}>

@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import styled from 'styled-components';
 import data from '../helpers/current-loans.json';
 import { Btn } from '../helpers/commonStyled';
-import { Loan } from './LoansListItem';
+import { formatNumber } from '../helpers/commonFunctions';
 
 const BackDrop = styled.div`
   position: fixed;
@@ -139,8 +139,8 @@ const Modal: React.FC<Props> = ({ setModalOpen, invested, setInvested, currentLo
           <p>Invest in loan</p>
           <Title>{currentLoan.title}</Title>
           <p>
-            Amount available: &#163;
-            {new Intl.NumberFormat('en-GB', { maximumSignificantDigits: 3 }).format(+currentLoan.available)}
+            Amount available:
+            {formatNumber(currentLoan.available)}
           </p>
           <p>Loan ends in: {getDaysLeft()} days</p>
           <p>Investment amount (&#163;)</p>
