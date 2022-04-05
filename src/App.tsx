@@ -38,8 +38,6 @@ const App: React.FC = () => {
     setModalOpen(true);
   };
 
-  console.log(invested);
-
   return (
     <div>
       {modalOpen && (
