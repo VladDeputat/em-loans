@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import LoansListItem from './components/LoansListItem';
+import LoansListItem, { Loan } from './components/LoansListItem';
 import Modal from './components/Modal';
 import { formatNumber } from './helpers/commonFunctions';
 import data from './helpers/current-loans.json';
@@ -33,6 +33,13 @@ const App: React.FC = () => {
     .reduce((acc, amount) => acc + amount)
     .toString();
 
+  const onLoanInvest = (loan: Loan) => {
+    setCurrentLoan(loan);
+    setModalOpen(true);
+  };
+
+  console.log(invested);
+
   return (
     <div>
       {modalOpen && (
@@ -41,13 +48,7 @@ const App: React.FC = () => {
 
       <Heading>Current loans</Heading>
       {data.loans.map((loan) => (
-        <LoansListItem
-          key={loan.id}
-          loan={loan}
-          invested={invested}
-          setModalOpen={setModalOpen}
-          setCurrentLoan={setCurrentLoan}
-        />
+        <LoansListItem key={loan.id} loan={loan} invested={invested[loan.id]} onLoanInvest={onLoanInvest} />
       ))}
       <AvailableAmount>
         Total amount avaiable for ivestments:

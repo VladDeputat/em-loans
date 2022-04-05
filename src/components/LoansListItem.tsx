@@ -55,21 +55,15 @@ export interface Loan {
 }
 interface Props {
   loan: Loan;
-  invested: { [key: string]: boolean };
-  setModalOpen: (modalOpen: boolean) => void;
-  setCurrentLoan: (loan: Loan) => void;
+  invested: boolean;
+  onLoanInvest: (loan: Loan) => void;
 }
 
-const LoansListItem: React.FC<Props> = ({ loan, invested, setModalOpen, setCurrentLoan }) => {
-  const onModalOpen = () => {
-    setCurrentLoan(loan);
-    setModalOpen(true);
-  };
-
+const LoansListItem: React.FC<Props> = ({ loan, invested, onLoanInvest }) => {
   return (
     <MainContainer>
       <LoanName>{loan.title}</LoanName>
-      {invested[loan.id] && <InvestedSign>Invested</InvestedSign>}
+      {invested && <InvestedSign>Invested</InvestedSign>}
       <InfoContainer>
         <ul>
           <li>Annualised return</li>
@@ -82,7 +76,7 @@ const LoansListItem: React.FC<Props> = ({ loan, invested, setModalOpen, setCurre
           <li>{formatNumber(loan.amount)}</li>
         </ul>
 
-        <Btn type="button" onClick={onModalOpen}>
+        <Btn type="button" onClick={() => onLoanInvest(loan)}>
           invest
         </Btn>
       </InfoContainer>
