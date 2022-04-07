@@ -33,20 +33,24 @@ const App: React.FC = () => {
     .reduce((acc, amount) => acc + amount)
     .toString();
 
-  const onLoanInvest = (loan: Loan) => {
+  const onModalOpen = (loan: Loan) => {
     setCurrentLoan(loan);
     setModalOpen(true);
   };
 
+  const onInvest = (loan: Loan) => {
+    invested[loan.id] = true;
+    setInvested(invested);
+    setModalOpen(false);
+  };
+
   return (
     <div>
-      {modalOpen && (
-        <Modal setModalOpen={setModalOpen} invested={invested} setInvested={setInvested} currentLoan={currentLoan} />
-      )}
+      {modalOpen && <Modal setModalOpen={setModalOpen} currentLoan={currentLoan} onInvest={onInvest} />}
 
       <Heading>Current loans</Heading>
       {data.loans.map((loan) => (
-        <LoansListItem key={loan.id} loan={loan} invested={invested[loan.id]} onLoanInvest={onLoanInvest} />
+        <LoansListItem key={loan.id} loan={loan} invested={invested[loan.id]} onModalOpen={onModalOpen} />
       ))}
       <AvailableAmount>
         Total amount avaiable for ivestments:

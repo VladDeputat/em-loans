@@ -56,10 +56,10 @@ export interface Loan {
 interface Props {
   loan: Loan;
   invested: boolean;
-  onLoanInvest: (loan: Loan) => void;
+  onModalOpen: (loan: Loan) => void;
 }
 
-const LoansListItem: React.FC<Props> = ({ loan, invested, onLoanInvest }) => {
+const LoansListItem: React.FC<Props> = ({ loan, invested, onModalOpen }) => {
   return (
     <MainContainer>
       <LoanName>{loan.title}</LoanName>
@@ -76,7 +76,7 @@ const LoansListItem: React.FC<Props> = ({ loan, invested, onLoanInvest }) => {
           <li>{formatNumber(loan.amount)}</li>
         </ul>
 
-        <Btn type="button" onClick={() => onLoanInvest(loan)}>
+        <Btn type="button" onClick={() => onModalOpen(loan)}>
           invest
         </Btn>
       </InfoContainer>

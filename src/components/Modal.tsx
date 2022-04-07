@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import data from '../helpers/current-loans.json';
 import { Btn } from '../helpers/commonStyled';
 import { formatNumber } from '../helpers/commonFunctions';
+import { Loan } from './LoansListItem';
 
 const BackDrop = styled.div`
   position: fixed;
@@ -91,12 +92,11 @@ const StyledErrorMessage = styled(ErrorMessage)`
 
 interface Props {
   currentLoan: any;
-  invested: { [key: string]: boolean };
-  setInvested: (invested: { [key: string]: boolean }) => void;
   setModalOpen: (modalOpen: boolean) => void;
+  onInvest: (loan: Loan) => void;
 }
 
-const Modal: React.FC<Props> = ({ setModalOpen, invested, setInvested, currentLoan }) => {
+const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -150,9 +150,7 @@ const Modal: React.FC<Props> = ({ setModalOpen, invested, setInvested, currentLo
           validationSchema={FormSchema}
           onSubmit={({ number }) => {
             onLoanEdit(number);
-            invested[currentLoan.id] = true;
-            setInvested(invested);
-            setModalOpen(false);
+            onInvest(currentLoan);
           }}
         >
           {({ errors }) => (
