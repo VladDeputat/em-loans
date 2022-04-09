@@ -49,6 +49,10 @@ const ModalWrapper = styled.div`
     display: flex;
   }
 
+  label {
+    display: none;
+  }
+
   input {
     height: 50px;
     width: 250px;
@@ -120,7 +124,8 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
 
   const FormSchema = Yup.object().shape({
     number: Yup.number()
-      .min(1, 'You might want to invest at least 1')
+      .moreThan(0, 'You might want to invest at least something')
+      // .min(1, 'You might want to invest at least 1')
       .max(+currentLoan.available, 'You cant invest more then you have')
       .required('Please, enter your amount'),
   });
@@ -131,7 +136,7 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
 
   return (
     <BackDrop>
-      <ModalWrapper>
+      <ModalWrapper data-testid="modal">
         <CloseBtn type="button" onClick={() => setModalOpen(false)}>
           x
         </CloseBtn>
@@ -156,7 +161,8 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
           {({ errors }) => (
             <Form>
               <div>
-                <Field errors={errors.number} autoComplete="off" name="number" type="number" />
+                <label htmlFor="number">Number</label>
+                <Field id="number" errors={errors.number} autoComplete="off" name="number" type="number" />
                 <StyledErrorMessage name="number" component="div" />
               </div>
               <SubmitBtn type="submit">Invest</SubmitBtn>

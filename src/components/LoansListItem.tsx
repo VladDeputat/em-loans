@@ -61,7 +61,7 @@ interface Props {
 
 const LoansListItem: React.FC<Props> = ({ loan, invested, onModalOpen }) => {
   return (
-    <MainContainer>
+    <MainContainer data-testid={'loanContainer-' + loan.id}>
       <LoanName>{loan.title}</LoanName>
       {invested && <InvestedSign>Invested</InvestedSign>}
       <InfoContainer>
@@ -73,7 +73,7 @@ const LoansListItem: React.FC<Props> = ({ loan, invested, onModalOpen }) => {
         <ul>
           <li>{loan.annualised_return}</li>
           <li>{loan.ltv}</li>
-          <li>{formatNumber(loan.amount)}</li>
+          <li data-testid="loan-amount">{formatNumber(loan.amount)}</li>
         </ul>
 
         <Btn type="button" onClick={() => onModalOpen(loan)}>
