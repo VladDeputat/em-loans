@@ -60,4 +60,17 @@ describe('App integration test', () => {
     const totalAmount = screen.getByTestId('total-amount');
     expect(totalAmount).toHaveTextContent('£27,000.00');
   });
+
+  it('should not render modal if closed', async () => {
+    render(<App />);
+    const loanContainer = screen.getByTestId('loanContainer-5');
+    const loanBtn = within(loanContainer).getByRole('button', { name: /invest/i });
+    userEvent.click(loanBtn);
+    const modalContainer = screen.getByTestId('modal');
+    expect(modalContainer).toBeInTheDocument();
+    const closeBtn = screen.getByTestId('modal-close');
+    expect(closeBtn).toBeInTheDocument();
+    userEvent.click(closeBtn);
+    expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+  });
 });

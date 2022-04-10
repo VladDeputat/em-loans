@@ -125,7 +125,6 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
   const FormSchema = Yup.object().shape({
     number: Yup.number()
       .moreThan(0, 'You might want to invest at least something')
-      // .min(1, 'You might want to invest at least 1')
       .max(+currentLoan.available, 'You cant invest more then you have')
       .required('Please, enter your amount'),
   });
@@ -137,17 +136,17 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
   return (
     <BackDrop>
       <ModalWrapper data-testid="modal">
-        <CloseBtn type="button" onClick={() => setModalOpen(false)}>
+        <CloseBtn data-testid="modal-close" type="button" onClick={() => setModalOpen(false)}>
           x
         </CloseBtn>
         <div>
           <p>Invest in loan</p>
-          <Title>{currentLoan.title}</Title>
-          <p>
+          <Title data-testid="title">{currentLoan.title}</Title>
+          <p data-testid="available">
             Amount available:
             {formatNumber(currentLoan.available)}
           </p>
-          <p>Loan ends in: {getDaysLeft()} days</p>
+          <p data-testid="days-left">Loan ends in: {getDaysLeft()} days</p>
           <p>Investment amount (&#163;)</p>
         </div>
         <Formik
@@ -163,7 +162,7 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
               <div>
                 <label htmlFor="number">Number</label>
                 <Field id="number" errors={errors.number} autoComplete="off" name="number" type="number" />
-                <StyledErrorMessage name="number" component="div" />
+                <StyledErrorMessage data-testid="error" name="number" component="div" />
               </div>
               <SubmitBtn type="submit">Invest</SubmitBtn>
             </Form>
