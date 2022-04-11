@@ -36,7 +36,7 @@ describe('Modal component', () => {
 
     const daysLeft = screen.getByTestId('days-left');
     expect(daysLeft).toBeInTheDocument();
-    expect(daysLeft).toHaveTextContent('385 days');
+    expect(daysLeft).toHaveTextContent('384 days');
   });
 });
 
