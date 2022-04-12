@@ -49,6 +49,10 @@ const ModalWrapper = styled.div`
     display: flex;
   }
 
+  label {
+    display: none;
+  }
+
   input {
     height: 50px;
     width: 250px;
@@ -120,7 +124,7 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
 
   const FormSchema = Yup.object().shape({
     number: Yup.number()
-      .min(1, 'You might want to invest at least 1')
+      .moreThan(0, 'You might want to invest at least something')
       .max(+currentLoan.available, 'You cant invest more then you have')
       .required('Please, enter your amount'),
   });
@@ -131,18 +135,18 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
 
   return (
     <BackDrop>
-      <ModalWrapper>
-        <CloseBtn type="button" onClick={() => setModalOpen(false)}>
+      <ModalWrapper data-testid="modal">
+        <CloseBtn data-testid="modal-close" type="button" onClick={() => setModalOpen(false)}>
           x
         </CloseBtn>
         <div>
           <p>Invest in loan</p>
-          <Title>{currentLoan.title}</Title>
-          <p>
+          <Title data-testid="title">{currentLoan.title}</Title>
+          <p data-testid="available">
             Amount available:
             {formatNumber(currentLoan.available)}
           </p>
-          <p>Loan ends in: {getDaysLeft()} days</p>
+          <p data-testid="days-left">Loan ends in: {getDaysLeft()} days</p>
           <p>Investment amount (&#163;)</p>
         </div>
         <Formik
@@ -156,8 +160,9 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
           {({ errors }) => (
             <Form>
               <div>
-                <Field errors={errors.number} autoComplete="off" name="number" type="number" />
-                <StyledErrorMessage name="number" component="div" />
+                <label htmlFor="number">Number</label>
+                <Field id="number" errors={errors.number} autoComplete="off" name="number" type="number" />
+                <StyledErrorMessage data-testid="error" name="number" component="div" />
               </div>
               <SubmitBtn type="submit">Invest</SubmitBtn>
             </Form>

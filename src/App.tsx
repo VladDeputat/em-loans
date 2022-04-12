@@ -54,7 +54,7 @@ const App: React.FC = () => {
       ))}
       <AvailableAmount>
         Total amount avaiable for ivestments:
-        <Amount>{formatNumber(total)}</Amount>
+        <Amount data-testid="total-amount">{formatNumber(total)}</Amount>
       </AvailableAmount>
     </div>
   );
