@@ -14,9 +14,7 @@ const currentLoan = {
   amount: '80000',
 };
 
-jest
-  .useFakeTimers()
-  .setSystemTime(new Date('2022-04-11'));
+jest.useFakeTimers().setSystemTime(new Date('2022-04-11'));
 
 const setModalOpenMock = jest.fn();
 const onInvestMock = jest.fn();
@@ -107,15 +105,17 @@ describe('Modal input validation', () => {
     expect(modalInput).toHaveValue(3000);
     userEvent.click(submitBtn);
     await expect(screen.queryByTestId('error')).not.toBeInTheDocument();
-    await waitFor(() => expect(onInvestMock).toHaveBeenCalledWith({
-      id: '1',
-      title: 'MockTitle1',
-      tranche: 'A',
-      available: '7000',
-      annualised_return: '8.60',
-      term_remaining: '1682852711000',
-      ltv: '48.80',
-      amount: '83000',
-    }));
+    await waitFor(() =>
+      expect(onInvestMock).toHaveBeenCalledWith({
+        id: '1',
+        title: 'MockTitle1',
+        tranche: 'A',
+        available: '7000',
+        annualised_return: '8.60',
+        term_remaining: '1682852711000',
+        ltv: '48.80',
+        amount: '83000',
+      }),
+    );
   });
 });

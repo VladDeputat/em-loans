@@ -111,7 +111,7 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
     return {
       ...currentLoan,
       available: (+currentLoan.available - investValue).toString(),
-      amount: (+currentLoan.amount + investValue).toString()
+      amount: (+currentLoan.amount + investValue).toString(),
     };
   };
 

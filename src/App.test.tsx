@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import App from './App';
-import '@testing-library/jest-dom'
 
-jest.mock('./helpers/current-loans.json', () => {
+jest.mock('../db.json', () => {
   return {
     __esModule: true,
     default: {
@@ -35,7 +35,7 @@ jest.mock('./helpers/current-loans.json', () => {
 describe('App unit test', () => {
   it('should render loans list', async () => {
     render(<App />);
-    const loan1 = screen.getByTestId('loanContainer-1');
+    const loan1 = await screen.findByTestId('loanContainer-1');
     const loan2 = screen.getByTestId('loanContainer-5');
     expect(loan1).toBeInTheDocument();
     expect(loan2).toBeInTheDocument();
@@ -48,6 +48,6 @@ describe('App unit test', () => {
   it('should render total', async () => {
     render(<App />);
     const total = screen.getByTestId('total-amount');
-    expect(total).toHaveTextContent('£30,000.00');
+    await expect(total).toHaveTextContent('£27,000.00');
   });
 });
