@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import styled from 'styled-components';
-import data from '../helpers/current-loans.json';
 import { Btn } from '../helpers/commonStyled';
 import { formatNumber } from '../helpers/commonFunctions';
-import { Loan } from './LoansListItem';
+import { Loan } from '../model';
 
 const BackDrop = styled.div`
   position: fixed;
@@ -95,7 +94,7 @@ const StyledErrorMessage = styled(ErrorMessage)`
 `;
 
 interface Props {
-  currentLoan: any;
+  currentLoan: Loan;
   setModalOpen: (modalOpen: boolean) => void;
   onInvest: (loan: Loan) => void;
 }
@@ -108,13 +107,12 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
     };
   }, []);
 
-  const loan = data.loans.find((loan) => currentLoan.id === loan.id);
-
-  const onLoanEdit = (investValue: number) => {
-    if (loan) {
-      loan.available = (+loan.available - investValue).toString();
-      loan.amount = (+loan.amount + investValue).toString();
-    }
+  const onLoanEdit = (investValue: number): Loan => {
+    return {
+      ...currentLoan,
+      available: (+currentLoan.available - investValue).toString(),
+      amount: (+currentLoan.amount + investValue).toString()
+    };
   };
 
   const getDaysLeft = () => {
@@ -153,8 +151,7 @@ const Modal: React.FC<Props> = ({ onInvest, currentLoan, setModalOpen }) => {
           initialValues={initialValues}
           validationSchema={FormSchema}
           onSubmit={({ number }) => {
-            onLoanEdit(number);
-            onInvest(currentLoan);
+            onInvest(onLoanEdit(number));
           }}
         >
           {({ errors }) => (

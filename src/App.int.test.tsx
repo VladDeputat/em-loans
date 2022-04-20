@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import App from './App';
@@ -32,6 +32,7 @@ jest.mock('./helpers/current-loans.json', () => {
     },
   };
 });
+
 describe('App integration test', () => {
   it('should pass happy pass', async () => {
     render(<App />);
@@ -58,10 +59,12 @@ describe('App integration test', () => {
     expect(investedSign).toBeInTheDocument();
 
     const loanAmount = within(loanContainer).getByTestId('loan-amount');
-    expect(loanAmount).toHaveTextContent('£103,000.00');
-
     const totalAmount = screen.getByTestId('total-amount');
-    expect(totalAmount).toHaveTextContent('£27,000.00');
+
+    await waitFor(() => {
+      expect(loanAmount).toHaveTextContent('£103,000.00');
+      expect(totalAmount).toHaveTextContent('£27,000.00');
+    });
   });
 
   it('should not render modal if closed', async () => {
@@ -78,22 +81,4 @@ describe('App integration test', () => {
   });
 });
 
-describe('App unit test', () => {
-  it('should render loans list', async () => {
-    render(<App />);
-    const loan1 = screen.getByTestId('loanContainer-1');
-    const loan2 = screen.getByTestId('loanContainer-5');
-    expect(loan1).toBeInTheDocument();
-    expect(loan2).toBeInTheDocument();
-  });
-  it('should render main heading', async () => {
-    render(<App />);
-    const heading = screen.getByText('Current loans');
-    expect(heading).toBeInTheDocument();
-  });
-  it('should render total', async () => {
-    render(<App />);
-    const total = screen.getByTestId('total-amount');
-    await expect(total).toHaveTextContent('£27,000.00');
-  });
-});
+

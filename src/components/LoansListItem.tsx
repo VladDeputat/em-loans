@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { formatNumber } from '../helpers/commonFunctions';
 import { Btn } from '../helpers/commonStyled';
+import { Loan } from '../model';
 
 const MainContainer = styled.div`
   position: relative;
@@ -44,22 +45,14 @@ const LoanName = styled.h3`
   line-height: 1.2;
   margin-bottom: 10px;
 `;
-export interface Loan {
-  id: string;
-  title: string;
-  available: string;
-  annualised_return: string;
-  term_remaining: string;
-  ltv: string;
-  amount: string;
-}
+
 interface Props {
   loan: Loan;
   invested: boolean;
-  onModalOpen: (loan: Loan) => void;
+  onInvest: (loan: Loan) => void;
 }
 
-const LoansListItem: React.FC<Props> = ({ loan, invested, onModalOpen }) => {
+const LoansListItem: React.FC<Props> = ({ loan, invested, onInvest }) => {
   return (
     <MainContainer data-testid={'loanContainer-' + loan.id}>
       <LoanName>{loan.title}</LoanName>
@@ -76,7 +69,7 @@ const LoansListItem: React.FC<Props> = ({ loan, invested, onModalOpen }) => {
           <li data-testid="loan-amount">{formatNumber(loan.amount)}</li>
         </ul>
 
-        <Btn type="button" onClick={() => onModalOpen(loan)}>
+        <Btn type="button" onClick={() => onInvest(loan)}>
           invest
         </Btn>
       </InfoContainer>
