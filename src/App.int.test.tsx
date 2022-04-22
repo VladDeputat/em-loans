@@ -1,13 +1,14 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import App from './App';
 
-jest.mock('./helpers/current-loans.json', () => {
-  return {
-    __esModule: true,
-    default: {
-      loans: [
+const server = setupServer(
+  rest.get('http://localhost:3001/loans', (req, res, ctx) => {
+    return res(
+      ctx.json([
         {
           id: '1',
           title: 'MockTitle1',
@@ -28,10 +29,15 @@ jest.mock('./helpers/current-loans.json', () => {
           ltv: '48.80',
           amount: '100000',
         },
-      ],
-    },
-  };
-});
+      ]),
+    );
+  }),
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
 describe('App integration test', () => {
   it('should pass happy pass', async () => {
     render(<App />);
@@ -62,6 +68,12 @@ describe('App integration test', () => {
 
     const totalAmount = screen.getByTestId('total-amount');
     expect(totalAmount).toHaveTextContent('£27,000.00');
+    await waitFor(() => {
+      expect(loanAmount).toHaveTextContent('£103,000.00');
+    });
+    await waitFor(() => {
+      expect(totalAmount).toHaveTextContent('£27,000.00');
+    });
   });
 
   it('should not render modal if closed', async () => {
