@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import LoansListItem, { Loan } from './components/LoansListItem';
+import LoansListItem from './components/LoansListItem';
 import Modal from './components/Modal';
 import { formatNumber } from './helpers/commonFunctions';
-import data from './helpers/current-loans.json';
+import { Loan } from './model';
+import { getLoans } from './services/api';
 
 const Heading = styled.h1`
   width: 600px;
@@ -24,14 +25,22 @@ const Amount = styled.span`
 `;
 
 const App: React.FC = () => {
+  const [loans, setLoans] = useState<Loan[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [currentLoan, setCurrentLoan] = useState({});
+  const [currentLoan, setCurrentLoan] = useState<Loan | null>(null);
   const [invested, setInvested] = useState<{ [key: string]: boolean }>({});
 
-  const total = data.loans
-    .map((loan) => +loan.available)
-    .reduce((acc, amount) => acc + amount)
-    .toString();
+  useEffect(() => {
+    getLoans().then((data) => setLoans(data));
+  }, []);
+
+  const total =
+    loans.length > 0
+      ? loans
+          .map((loan) => +loan.available)
+          .reduce((acc, amount) => acc + amount)
+          .toString()
+      : '0';
 
   const onModalOpen = (loan: Loan) => {
     setCurrentLoan(loan);
@@ -40,17 +49,23 @@ const App: React.FC = () => {
 
   const onInvest = (loan: Loan) => {
     invested[loan.id] = true;
+    setLoans((oldLoans) => {
+      const newLoans = [...oldLoans];
+      const loanIndex = newLoans.findIndex((newLoan) => newLoan.id === loan.id);
+      newLoans[loanIndex] = loan;
+      return newLoans;
+    });
     setInvested(invested);
     setModalOpen(false);
   };
 
   return (
     <div>
-      {modalOpen && <Modal setModalOpen={setModalOpen} currentLoan={currentLoan} onInvest={onInvest} />}
+      {modalOpen && currentLoan && <Modal setModalOpen={setModalOpen} currentLoan={currentLoan} onInvest={onInvest} />}
 
       <Heading>Current loans</Heading>
-      {data.loans.map((loan) => (
-        <LoansListItem key={loan.id} loan={loan} invested={invested[loan.id]} onModalOpen={onModalOpen} />
+      {loans.map((loan) => (
+        <LoansListItem key={loan.id} loan={loan} invested={invested[loan.id]} onInvest={onModalOpen} />
       ))}
       <AvailableAmount>
         Total amount avaiable for ivestments:

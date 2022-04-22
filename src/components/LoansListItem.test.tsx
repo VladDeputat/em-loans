@@ -20,7 +20,7 @@ describe('Loan list item component', () => {
     const invested = true;
 
     //when
-    render(<LoansListItem loan={loan} invested={invested} onModalOpen={onModalOpenMock} />);
+    render(<LoansListItem loan={loan} invested={invested} onInvest={onModalOpenMock} />);
     // screen.debug();
     //then
     testLoanDetails();
@@ -32,7 +32,7 @@ describe('Loan list item component', () => {
     const invested = false;
 
     //when
-    render(<LoansListItem loan={loan} invested={invested} onModalOpen={onModalOpenMock} />);
+    render(<LoansListItem loan={loan} invested={invested} onInvest={onModalOpenMock} />);
     // screen.debug();
     //then
     testLoanDetails();
@@ -41,7 +41,7 @@ describe('Loan list item component', () => {
   });
 
   it('should trigger onModalOpen on invest button click', () => {
-    render(<LoansListItem loan={loan} invested={true} onModalOpen={onModalOpenMock} />);
+    render(<LoansListItem loan={loan} invested={true} onInvest={onModalOpenMock} />);
     const loanButton = screen.getByRole('button', { name: /invest/i });
     userEvent.click(loanButton);
     expect(onModalOpenMock).toHaveBeenCalledWith(loan);

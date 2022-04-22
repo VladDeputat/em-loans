@@ -41,7 +41,7 @@ afterAll(() => server.close());
 describe('App integration test', () => {
   it('should pass happy pass', async () => {
     render(<App />);
-    const loanContainer = screen.getByTestId('loanContainer-5');
+    const loanContainer = await screen.findByTestId('loanContainer-5');
     const loanBtn = within(loanContainer).getByRole('button', { name: /invest/i });
     userEvent.click(loanBtn);
     const modalInput = await screen.findByLabelText('Number');
@@ -64,8 +64,6 @@ describe('App integration test', () => {
     expect(investedSign).toBeInTheDocument();
 
     const loanAmount = within(loanContainer).getByTestId('loan-amount');
-    expect(loanAmount).toHaveTextContent('£103,000.00');
-
     const totalAmount = screen.getByTestId('total-amount');
     expect(totalAmount).toHaveTextContent('£27,000.00');
     await waitFor(() => {
@@ -78,7 +76,7 @@ describe('App integration test', () => {
 
   it('should not render modal if closed', async () => {
     render(<App />);
-    const loanContainer = screen.getByTestId('loanContainer-5');
+    const loanContainer = await screen.findByTestId('loanContainer-5');
     const loanBtn = within(loanContainer).getByRole('button', { name: /invest/i });
     userEvent.click(loanBtn);
     const modalContainer = screen.getByTestId('modal');
@@ -87,25 +85,5 @@ describe('App integration test', () => {
     expect(closeBtn).toBeInTheDocument();
     userEvent.click(closeBtn);
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
-  });
-});
-
-describe('App unit test', () => {
-  it('should render loans list', async () => {
-    render(<App />);
-    const loan1 = screen.getByTestId('loanContainer-1');
-    const loan2 = screen.getByTestId('loanContainer-5');
-    expect(loan1).toBeInTheDocument();
-    expect(loan2).toBeInTheDocument();
-  });
-  it('should render main heading', async () => {
-    render(<App />);
-    const heading = screen.getByText('Current loans');
-    expect(heading).toBeInTheDocument();
-  });
-  it('should render total', async () => {
-    render(<App />);
-    const total = screen.getByTestId('total-amount');
-    await expect(total).toHaveTextContent('£27,000.00');
   });
 });
