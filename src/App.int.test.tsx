@@ -28,10 +28,30 @@ jest.mock('../db.json', () => {
           ltv: '48.80',
           amount: '100000',
         },
-      ],
-    },
-  };
-});
+      ]),
+    );
+  }),
+  rest.put('http://localhost:3001/loans/:loanId', (req, res, ctx) => {
+    return res(
+      ctx.json([
+        {
+          id: '1',
+          title: 'res-title',
+          tranche: 'A',
+          available: '27000',
+          annualised_return: '8.60',
+          term_remaining: '1648243234000',
+          ltv: '48.80',
+          amount: '103000',
+        },
+      ]),
+    );
+  }),
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 describe('App integration test', () => {
   it('should pass happy pass', async () => {
@@ -42,7 +62,6 @@ describe('App integration test', () => {
     const modalInput = await screen.findByLabelText('Number');
     expect(modalInput).toBeInTheDocument();
 
-    // screen.debug();
     userEvent.type(modalInput, '4000');
     expect(modalInput).toHaveValue(4000);
 
@@ -53,18 +72,18 @@ describe('App integration test', () => {
     const submitBtn = within(modalContainer).getByRole('button', { name: /invest/i });
     userEvent.click(submitBtn);
 
-    expect(await screen.findByTestId('modal')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+    });
 
     const investedSign = within(loanContainer).queryByText('Invested');
     expect(investedSign).toBeInTheDocument();
 
-    const loanAmount = within(loanContainer).getByTestId('loan-amount');
-    const totalAmount = screen.getByTestId('total-amount');
-
     await waitFor(() => {
-      expect(loanAmount).toHaveTextContent('£103,000.00');
-      // expect(totalAmount).toHaveTextContent('£27,000.00');
+      expect(within(loanContainer).getByTestId('loan-amount')).toHaveTextContent('£103,000.00');
     });
+
+    expect(screen.getByTestId('total-amount')).toHaveTextContent('£27,000.00');
   });
 
   it('should not render modal if closed', async () => {

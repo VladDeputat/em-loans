@@ -4,7 +4,7 @@ import LoansListItem from './components/LoansListItem';
 import Modal from './components/Modal';
 import { formatNumber } from './helpers/commonFunctions';
 import { Loan } from './model';
-import { getLoans } from './services/api';
+import { getLoans, updateLoan } from './services/api';
 
 const Heading = styled.h1`
   width: 600px;
@@ -47,14 +47,10 @@ const App: React.FC = () => {
     setModalOpen(true);
   };
 
-  const onInvest = (loan: Loan) => {
+  const onInvest = async (loan: Loan) => {
     invested[loan.id] = true;
-    setLoans((oldLoans) => {
-      const newLoans = [...oldLoans];
-      const loanIndex = newLoans.findIndex((newLoan) => newLoan.id === loan.id);
-      newLoans[loanIndex] = loan;
-      return newLoans;
-    });
+    await updateLoan(loan);
+    await getLoans().then((data) => setLoans(data));
     setInvested(invested);
     setModalOpen(false);
   };
